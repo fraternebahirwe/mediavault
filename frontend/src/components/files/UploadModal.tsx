@@ -1,6 +1,6 @@
-import { useCallback, useState } from "react";
+import { ChangeEvent, useCallback, useRef, useState } from "react";
 import { FileRejection, useDropzone } from "react-dropzone";
-import { CheckCircle2, File as FileIcon, UploadCloud, X, XCircle } from "lucide-react";
+import { CheckCircle2, File as FileIcon, FolderUp, UploadCloud, X, XCircle } from "lucide-react";
 import { Modal } from "../ui/Modal";
 import { useUploadContext } from "../../context/UploadContext";
 import { useUploadFile } from "../../hooks/useFiles";
@@ -27,6 +27,17 @@ const ACCEPTED_TYPES = {
 
 const MAX_FILE_SIZE = 200 * 1024 * 1024;
 
+const ALLOWED_EXTENSIONS = new Set(Object.values(ACCEPTED_TYPES).flat());
+
+// The <input webkitdirectory> path (and manually-fed files in general) skip
+// react-dropzone's accept/maxSize validators, since those only run on drag
+// events - so folder selection needs its own equivalent checks.
+function isAllowedFile(file: File): boolean {
+  if (file.type && file.type in ACCEPTED_TYPES) return true;
+  const ext = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
+  return ALLOWED_EXTENSIONS.has(ext);
+}
+
 type UploadItem = {
   id: string;
   file: File;
@@ -39,6 +50,14 @@ export function UploadModal() {
   const { isOpen, targetFolderId, closeUpload } = useUploadContext();
   const uploadMutation = useUploadFile();
   const [items, setItems] = useState<UploadItem[]>([]);
+  const folderInputRef = useRef<HTMLInputElement>(null);
+
+  const addRejected = useCallback((file: File, errorMessage: string) => {
+    setItems((prev) => [
+      ...prev,
+      { id: `${file.name}-${file.size}-${Date.now()}-${Math.random()}`, file, progress: 0, status: "error", errorMessage },
+    ]);
+  }, []);
 
   const uploadOne = useCallback(
     (file: File) => {
@@ -74,20 +93,9 @@ export function UploadModal() {
   const onDrop = useCallback(
     (accepted: File[], rejected: FileRejection[]) => {
       accepted.forEach(uploadOne);
-      rejected.forEach(({ file, errors }) => {
-        setItems((prev) => [
-          ...prev,
-          {
-            id: `${file.name}-${file.size}-${Date.now()}`,
-            file,
-            progress: 0,
-            status: "error",
-            errorMessage: errors[0]?.message ?? "File rejected",
-          },
-        ]);
-      });
+      rejected.forEach(({ file, errors }) => addRejected(file, errors[0]?.message ?? "File rejected"));
     },
-    [uploadOne]
+    [uploadOne, addRejected]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -96,6 +104,26 @@ export function UploadModal() {
     maxSize: MAX_FILE_SIZE,
     multiple: true,
   });
+
+  // Folders dropped directly onto the dropzone above are already expanded
+  // into individual files by react-dropzone/file-selector. This handler
+  // covers the "click to choose a folder" path via a plain <input
+  // webkitdirectory> element, whose files bypass react-dropzone entirely -
+  // so type/size are validated by hand and every file lands flat in
+  // whichever folder is currently open (subfolder structure isn't kept).
+  const handleFolderSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    files.forEach((file) => {
+      if (file.size > MAX_FILE_SIZE) {
+        addRejected(file, `File is larger than ${formatBytes(MAX_FILE_SIZE)}`);
+      } else if (!isAllowedFile(file)) {
+        addRejected(file, "Unsupported file type");
+      } else {
+        uploadOne(file);
+      }
+    });
+    e.target.value = "";
+  };
 
   const handleClose = () => {
     setItems([]);
@@ -114,11 +142,39 @@ export function UploadModal() {
       >
         <input {...getInputProps()} />
         <UploadCloud size={32} className="mx-auto text-gray-400 mb-2" />
-        <p className="text-sm font-medium">Drag & drop files here, or click to browse</p>
+        <p className="text-sm font-medium">Drag & drop files or a folder here, or click to browse</p>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
           Images, videos, and documents up to {formatBytes(MAX_FILE_SIZE)}
         </p>
       </div>
+
+      <div className="flex items-center justify-center mt-3">
+        <button
+          type="button"
+          className="text-xs text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 inline-flex items-center gap-1.5"
+          onClick={(e) => {
+            e.stopPropagation();
+            folderInputRef.current?.click();
+          }}
+        >
+          <FolderUp size={13} />
+          or select a folder to upload
+        </button>
+        <input
+          ref={folderInputRef}
+          type="file"
+          multiple
+          className="hidden"
+          // @ts-expect-error - non-standard attributes, not in the DOM lib's typings
+          webkitdirectory="true"
+          directory="true"
+          mozdirectory="true"
+          onChange={handleFolderSelect}
+        />
+      </div>
+      <p className="text-xs text-gray-400 dark:text-gray-500 text-center mt-1">
+        All files inside the folder are added here; the folder structure itself isn't recreated.
+      </p>
 
       {items.length > 0 && (
         <div className="mt-4 space-y-2 max-h-64 overflow-y-auto">

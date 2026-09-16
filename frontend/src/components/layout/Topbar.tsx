@@ -47,41 +47,43 @@ export function Topbar({ onUploadClick }: { onUploadClick: () => void }) {
         </div>
       </form>
 
-      <button onClick={onUploadClick} className="btn-primary hidden sm:inline-flex">
-        <Upload size={16} />
-        Upload
-      </button>
+      <div className="flex items-center gap-3 ml-auto">
+        <button onClick={onUploadClick} className="btn-primary hidden sm:inline-flex">
+          <Upload size={16} />
+          Upload
+        </button>
 
-      <button onClick={toggleTheme} className="btn-ghost p-2 rounded-lg" aria-label="Toggle theme">
-        {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-      </button>
+        <button onClick={toggleTheme} className="btn-ghost p-2 rounded-lg" aria-label="Toggle theme">
+          {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+        </button>
 
-      <Dropdown
-        trigger={
-          <button className="w-9 h-9 rounded-full bg-brand-600 text-white text-sm font-medium flex items-center justify-center">
-            {initials || "?"}
-          </button>
-        }
-      >
-        {(close) => (
-          <>
-            <div className="px-3 py-2">
-              <p className="text-sm font-medium truncate">{user?.name}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email}</p>
-            </div>
-            <div className="h-px bg-gray-200 dark:bg-gray-800 my-1" />
-            <DropdownItem
-              danger
-              onClick={() => {
-                close();
-                logout();
-              }}
-            >
-              Log out
-            </DropdownItem>
-          </>
-        )}
-      </Dropdown>
+        <Dropdown
+          trigger={
+            <button className="w-9 h-9 rounded-full bg-gray-700 dark:bg-gray-700 text-white text-sm font-medium flex items-center justify-center">
+              {initials || "?"}
+            </button>
+          }
+        >
+          {(close) => (
+            <>
+              <div className="px-3 py-2">
+                <p className="text-sm font-medium truncate">{user?.name}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email}</p>
+              </div>
+              <div className="h-px bg-gray-200 dark:bg-gray-800 my-1" />
+              <DropdownItem
+                danger
+                onClick={() => {
+                  close();
+                  logout();
+                }}
+              >
+                Log out
+              </DropdownItem>
+            </>
+          )}
+        </Dropdown>
+      </div>
 
       <MobileDrawer isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </header>
