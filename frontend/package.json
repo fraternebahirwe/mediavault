@@ -1,6 +1,7 @@
 {
   "name": "mediavault-frontend",
   "version": "1.0.0",
+  "author": "Fraterne Bahirwe",
   "private": true,
   "type": "module",
   "scripts": {

@@ -5,6 +5,7 @@ import { navItems } from "./navItems";
 import { useDashboard } from "../../hooks/useDashboard";
 import { ProgressBar } from "../ui/ProgressBar";
 import { formatBytes } from "../../utils/formatBytes";
+import { CopyrightFooter } from "./CopyrightFooter";
 
 export function Sidebar() {
   const { data: stats } = useDashboard();
@@ -49,6 +50,8 @@ export function Sidebar() {
           {formatBytes(used)} / {formatBytes(limit)} used
         </p>
       </div>
+
+      <CopyrightFooter className="mt-4" />
     </aside>
   );
 }
