@@ -1,0 +1,149 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum FileType {
+  PHOTO
+  VIDEO
+  DOCUMENT
+}
+
+enum SharePermission {
+  VIEW
+  DOWNLOAD
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String
+  name          String
+  storageLimit  BigInt    @default(10737418240) // 10 GB in bytes
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  files         File[]
+  folders       Folder[]
+  tags          Tag[]
+  sharedLinks   SharedLink[]
+  resetTokens   PasswordResetToken[]
+  refreshTokens RefreshToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("refresh_tokens")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@map("password_reset_tokens")
+}
+
+model Folder {
+  id        String   @id @default(uuid())
+  name      String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parentId  String?
+  parent    Folder?  @relation("FolderToFolder", fields: [parentId], references: [id], onDelete: Cascade)
+  children  Folder[] @relation("FolderToFolder")
+  files     File[]
+  isDeleted Boolean  @default(false)
+  deletedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("folders")
+}
+
+model File {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  folderId     String?
+  folder       Folder?  @relation(fields: [folderId], references: [id], onDelete: SetNull)
+
+  fileName     String
+  fileType     FileType
+  mimeType     String
+  fileSize     BigInt
+  storageKey   String
+  storageUrl   String
+  thumbnailUrl String?
+
+  isFavorite   Boolean  @default(false)
+  isDeleted    Boolean  @default(false)
+  deletedAt    DateTime?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  tags         FileTag[]
+  sharedLinks  SharedLink[]
+
+  @@index([userId])
+  @@index([folderId])
+  @@index([userId, isDeleted])
+  @@map("files")
+}
+
+model Tag {
+  id        String   @id @default(uuid())
+  name      String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  files     FileTag[]
+  createdAt DateTime @default(now())
+
+  @@unique([userId, name])
+  @@map("tags")
+}
+
+model FileTag {
+  fileId String
+  file   File   @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  tagId  String
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([fileId, tagId])
+  @@map("file_tags")
+}
+
+model SharedLink {
+  id         String           @id @default(uuid())
+  token      String           @unique
+  fileId     String
+  file       File             @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission SharePermission  @default(VIEW)
+  isPublic   Boolean          @default(true)
+  isActive   Boolean          @default(true)
+  expiresAt  DateTime?
+  createdAt  DateTime         @default(now())
+
+  @@index([fileId])
+  @@map("shared_links")
+}
