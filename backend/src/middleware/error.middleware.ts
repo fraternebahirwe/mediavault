@@ -28,9 +28,9 @@ export function errorHandler(
   }
 
   const message = err instanceof Error ? err.message : "Unexpected error";
-  if (!env.isProd) {
-    console.error(err);
-  }
+  // Always log server-side, even in prod - only the client response hides
+  // details. Without this, unexpected 500s are invisible in `vercel logs`.
+  console.error(err);
 
   res.status(500).json({
     message: env.isProd ? "Internal server error" : message,

@@ -9,6 +9,10 @@ import { errorHandler, notFoundHandler } from "./middleware/error.middleware";
 
 export const app = express();
 
+// Vercel sits in front as a reverse proxy, adding X-Forwarded-For; without
+// this, express-rate-limit can't reliably identify clients by IP.
+app.set("trust proxy", 1);
+
 app.use(
   cors({
     origin: env.clientUrl,
