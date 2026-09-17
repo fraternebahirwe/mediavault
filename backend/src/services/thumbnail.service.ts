@@ -1,4 +1,3 @@
-import sharp from "sharp";
 import { v4 as uuid } from "uuid";
 import { FileType } from "@prisma/client";
 import { storageProvider } from "../storage";
@@ -13,6 +12,10 @@ export async function generateThumbnail(
   if (fileType !== FileType.PHOTO) return null;
 
   try {
+    // Loaded lazily (not as a top-level import): sharp ships a native binary,
+    // and if it fails to load in a given runtime, a static import would crash
+    // the entire process at boot - taking down every route, not just uploads.
+    const sharp = (await import("sharp")).default;
     const thumbBuffer = await sharp(buffer)
       .resize(THUMB_SIZE, THUMB_SIZE, { fit: "cover" })
       .webp({ quality: 75 })
