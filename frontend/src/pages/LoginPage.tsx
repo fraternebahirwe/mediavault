@@ -11,13 +11,14 @@ export function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await login(email, password);
+      await login(email, password, rememberMe);
       navigate("/dashboard");
     } catch (err) {
       toast.error(getApiErrorMessage(err, "Login failed"));
@@ -56,6 +57,15 @@ export function LoginPage() {
             placeholder="••••••••"
           />
         </div>
+        <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 select-none cursor-pointer">
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+            className="rounded border-gray-300 dark:border-gray-700 text-brand-600 focus:ring-brand-500"
+          />
+          Remember me
+        </label>
         <button type="submit" disabled={isSubmitting} className="btn-primary w-full mt-2">
           {isSubmitting && <Spinner className="text-white" size={16} />}
           Log in

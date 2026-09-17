@@ -13,9 +13,9 @@ import { sendPasswordResetEmail } from "./email.service";
 const REFRESH_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const RESET_TTL_MS = 60 * 60 * 1000;
 
-async function issueTokens(userId: string, email: string) {
+async function issueTokens(userId: string, email: string, remember: boolean) {
   const accessToken = signAccessToken({ userId, email });
-  const refreshToken = signRefreshToken({ userId });
+  const refreshToken = signRefreshToken({ userId, remember });
 
   await prisma.refreshToken.create({
     data: {
@@ -25,7 +25,7 @@ async function issueTokens(userId: string, email: string) {
     },
   });
 
-  return { accessToken, refreshToken };
+  return { accessToken, refreshToken, remember };
 }
 
 export async function registerUser(email: string, password: string, name: string) {
@@ -42,23 +42,24 @@ export async function registerUser(email: string, password: string, name: string
     },
   });
 
-  const tokens = await issueTokens(user.id, user.email);
+  // A brand-new signup starts as a "remembered" session by default.
+  const tokens = await issueTokens(user.id, user.email, true);
   return { user, ...tokens };
 }
 
-export async function loginUser(email: string, password: string) {
+export async function loginUser(email: string, password: string, remember: boolean) {
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) throw ApiError.unauthorized("Invalid email or password");
 
   const valid = await comparePassword(password, user.passwordHash);
   if (!valid) throw ApiError.unauthorized("Invalid email or password");
 
-  const tokens = await issueTokens(user.id, user.email);
+  const tokens = await issueTokens(user.id, user.email, remember);
   return { user, ...tokens };
 }
 
 export async function refreshSession(refreshToken: string) {
-  let payload: { userId: string };
+  let payload: { userId: string; remember: boolean };
   try {
     payload = verifyRefreshToken(refreshToken);
   } catch {
@@ -78,7 +79,10 @@ export async function refreshSession(refreshToken: string) {
   // deleteMany (not delete) so a concurrent request that already consumed
   // this token doesn't crash with a "record not found" error.
   await prisma.refreshToken.deleteMany({ where: { token: refreshToken } });
-  const tokens = await issueTokens(user.id, user.email);
+  // Carry the original "remember me" choice forward so silent token
+  // rotation doesn't silently upgrade a session-only login into a
+  // persistent one (or vice versa).
+  const tokens = await issueTokens(user.id, user.email, payload.remember ?? false);
   return { user, ...tokens };
 }
 

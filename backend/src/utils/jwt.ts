@@ -14,10 +14,15 @@ export const signAccessToken = (payload: AccessTokenPayload) =>
 export const verifyAccessToken = (token: string): AccessTokenPayload =>
   jwt.verify(token, env.jwt.accessSecret) as AccessTokenPayload;
 
-export const signRefreshToken = (payload: { userId: string }) =>
+export interface RefreshTokenPayload {
+  userId: string;
+  remember: boolean;
+}
+
+export const signRefreshToken = (payload: RefreshTokenPayload) =>
   jwt.sign(payload, env.jwt.refreshSecret, {
     expiresIn: env.jwt.refreshExpiresIn,
   } as SignOptions);
 
-export const verifyRefreshToken = (token: string): { userId: string } =>
-  jwt.verify(token, env.jwt.refreshSecret) as { userId: string };
+export const verifyRefreshToken = (token: string): RefreshTokenPayload =>
+  jwt.verify(token, env.jwt.refreshSecret) as RefreshTokenPayload;

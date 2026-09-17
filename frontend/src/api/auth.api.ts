@@ -12,7 +12,7 @@ export async function registerRequest(data: { name: string; email: string; passw
   return res.data.user;
 }
 
-export async function loginRequest(data: { email: string; password: string }) {
+export async function loginRequest(data: { email: string; password: string; rememberMe?: boolean }) {
   const res = await apiClient.post<AuthResponse>("/auth/login", data);
   setAccessToken(res.data.accessToken);
   return res.data.user;

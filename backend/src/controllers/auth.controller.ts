@@ -13,6 +13,7 @@ const registerSchema = z.object({
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
+  rememberMe: z.boolean().optional().default(false),
 });
 
 const forgotSchema = z.object({ email: z.string().email() });
@@ -21,13 +22,19 @@ const resetSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-const REFRESH_COOKIE_OPTS = {
+const REFRESH_COOKIE_BASE = {
   httpOnly: true,
   secure: env.isProd,
   sameSite: "lax" as const,
   path: "/api/auth",
-  maxAge: 7 * 24 * 60 * 60 * 1000,
 };
+
+// "Remember me" checked: a persistent cookie (survives browser restarts,
+// matching the refresh token's real expiry). Unchecked: a session cookie
+// (no maxAge) — the browser drops it as soon as it closes, even though the
+// underlying token would otherwise still be valid.
+const REFRESH_COOKIE_PERSISTENT = { ...REFRESH_COOKIE_BASE, maxAge: 7 * 24 * 60 * 60 * 1000 };
+const REFRESH_COOKIE_SESSION = REFRESH_COOKIE_BASE;
 
 const ACCESS_COOKIE_OPTS = {
   httpOnly: true,
@@ -37,9 +44,14 @@ const ACCESS_COOKIE_OPTS = {
   maxAge: 15 * 60 * 1000,
 };
 
-function setAuthCookies(res: Response, accessToken: string, refreshToken: string) {
+function setAuthCookies(
+  res: Response,
+  accessToken: string,
+  refreshToken: string,
+  remember: boolean
+) {
   res.cookie("accessToken", accessToken, ACCESS_COOKIE_OPTS);
-  res.cookie("refreshToken", refreshToken, REFRESH_COOKIE_OPTS);
+  res.cookie("refreshToken", refreshToken, remember ? REFRESH_COOKIE_PERSISTENT : REFRESH_COOKIE_SESSION);
 }
 
 function toUserDto(user: { id: string; email: string; name: string; storageLimit: bigint }) {
@@ -53,19 +65,23 @@ function toUserDto(user: { id: string; email: string; name: string; storageLimit
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const { name, email, password } = registerSchema.parse(req.body);
-  const { user, accessToken, refreshToken } = await authService.registerUser(
+  const { user, accessToken, refreshToken, remember } = await authService.registerUser(
     email,
     password,
     name
   );
-  setAuthCookies(res, accessToken, refreshToken);
+  setAuthCookies(res, accessToken, refreshToken, remember);
   res.status(201).json({ user: toUserDto(user), accessToken });
 });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
-  const { email, password } = loginSchema.parse(req.body);
-  const { user, accessToken, refreshToken } = await authService.loginUser(email, password);
-  setAuthCookies(res, accessToken, refreshToken);
+  const { email, password, rememberMe } = loginSchema.parse(req.body);
+  const { user, accessToken, refreshToken, remember } = await authService.loginUser(
+    email,
+    password,
+    rememberMe
+  );
+  setAuthCookies(res, accessToken, refreshToken, remember);
   res.json({ user: toUserDto(user), accessToken });
 });
 
@@ -73,8 +89,8 @@ export const refresh = asyncHandler(async (req: Request, res: Response) => {
   const token = req.cookies?.refreshToken ?? req.body?.refreshToken;
   if (!token) return res.status(401).json({ message: "No refresh token provided" });
 
-  const { user, accessToken, refreshToken } = await authService.refreshSession(token);
-  setAuthCookies(res, accessToken, refreshToken);
+  const { user, accessToken, refreshToken, remember } = await authService.refreshSession(token);
+  setAuthCookies(res, accessToken, refreshToken, remember);
   res.json({ user: toUserDto(user), accessToken });
 });
 

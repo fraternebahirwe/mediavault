@@ -22,10 +22,10 @@ export function FileCard(props: FileCardProps) {
   const Icon = getFileIcon(file.fileType, file.mimeType);
 
   return (
-    <div className="card group overflow-hidden flex flex-col hover:shadow-soft transition-shadow">
+    <div className="card group flex flex-col hover:shadow-soft transition-shadow">
       <button
         onClick={onOpen}
-        className="relative aspect-square bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden"
+        className="relative aspect-square rounded-t-xl2 bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden"
       >
         {file.thumbnailUrl || file.fileType === "PHOTO" ? (
           <img
