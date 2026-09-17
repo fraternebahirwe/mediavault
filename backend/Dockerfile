@@ -16,4 +16,4 @@ RUN npm install --omit=dev
 RUN npx prisma generate
 COPY --from=base /app/dist ./dist
 EXPOSE 4000
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/server.js"]
+CMD ["sh", "-c", "(npx prisma migrate deploy || echo 'migrate deploy failed - continuing so the server can still boot and report a real error') && node dist/server.js"]
