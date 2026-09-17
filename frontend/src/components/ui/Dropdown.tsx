@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import clsx from "clsx";
 
 interface DropdownProps {
@@ -9,6 +9,7 @@ interface DropdownProps {
 
 export function Dropdown({ trigger, children, align = "right" }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [openUpward, setOpenUpward] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -18,6 +19,17 @@ export function Dropdown({ trigger, children, align = "right" }: DropdownProps) 
     };
     document.addEventListener("mousedown", onClickOutside);
     return () => document.removeEventListener("mousedown", onClickOutside);
+  }, [isOpen]);
+
+  // Flip the menu above the trigger when there isn't enough room below -
+  // otherwise, on mobile, a menu opened near the bottom of the screen ends
+  // up partly covered by the fixed bottom nav bar.
+  useLayoutEffect(() => {
+    if (!isOpen || !ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const estimatedMenuHeight = 320;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    setOpenUpward(spaceBelow < estimatedMenuHeight && rect.top > estimatedMenuHeight);
   }, [isOpen]);
 
   return (
@@ -33,7 +45,8 @@ export function Dropdown({ trigger, children, align = "right" }: DropdownProps) 
       {isOpen && (
         <div
           className={clsx(
-            "absolute z-20 mt-1 min-w-[180px] card p-1 animate-fade-in",
+            "absolute z-40 min-w-[180px] max-h-[70vh] overflow-y-auto card p-1 animate-fade-in",
+            openUpward ? "bottom-full mb-1" : "top-full mt-1",
             align === "right" ? "right-0" : "left-0"
           )}
           onClick={(e) => e.stopPropagation()}
