@@ -52,7 +52,13 @@ body {
     @apply btn hover:bg-gray-100 dark:hover:bg-gray-800;
   }
 
+  /*
+   * text-base (16px) on mobile, text-sm (14px) from the sm breakpoint up.
+   * iOS Safari auto-zooms the page when focusing an input smaller than
+   * 16px, and often doesn't reset afterward - leaving the page looking
+   * permanently zoomed in until the user manually pinches back out.
+   */
   .input {
-    @apply w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent;
+    @apply w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-base sm:text-sm outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent;
   }
 }
