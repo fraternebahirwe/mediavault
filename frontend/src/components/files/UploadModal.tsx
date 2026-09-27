@@ -151,7 +151,7 @@ export function UploadModal() {
       <div className="flex items-center justify-center mt-3">
         <button
           type="button"
-          className="text-xs text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 inline-flex items-center gap-1.5"
+          className="text-xs text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors inline-flex items-center gap-1.5"
           onClick={(e) => {
             e.stopPropagation();
             folderInputRef.current?.click();

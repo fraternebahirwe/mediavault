@@ -22,15 +22,15 @@ export function FileListRow(props: FileListRowProps) {
   const Icon = getFileIcon(file.fileType, file.mimeType);
 
   return (
-    <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors">
+    <div className="group hover-nudge flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/60">
       <button
         onClick={onOpen}
         className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden shrink-0"
       >
         {file.thumbnailUrl ? (
-          <img src={file.thumbnailUrl} alt={file.fileName} className="w-full h-full object-cover" />
+          <img src={file.thumbnailUrl} alt={file.fileName} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-200" />
         ) : (
-          <Icon size={18} className="text-gray-400" />
+          <Icon size={18} className="text-gray-400 group-hover:scale-110 transition-transform duration-200" />
         )}
       </button>
 

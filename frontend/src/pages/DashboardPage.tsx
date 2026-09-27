@@ -39,8 +39,8 @@ export function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <StorageWidget used={used} limit={limit} />
-        <div className="card p-5 flex items-center gap-3 lg:col-span-2">
-          <div className="w-10 h-10 rounded-lg bg-yellow-400 flex items-center justify-center shrink-0">
+        <div className="card hover-lift group p-5 flex items-center gap-3 lg:col-span-2">
+          <div className="w-10 h-10 rounded-lg bg-yellow-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-200">
             <Star size={20} className="text-white" />
           </div>
           <div>

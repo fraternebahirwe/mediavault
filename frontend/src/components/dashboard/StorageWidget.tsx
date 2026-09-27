@@ -6,7 +6,7 @@ export function StorageWidget({ used, limit }: { used: number; limit: number }) 
   const remaining = Math.max(limit - used, 0);
 
   return (
-    <div className="card p-5 flex items-center gap-5">
+    <div className="card hover-lift p-5 flex items-center gap-5">
       <CircularProgress percent={percent} />
       <div>
         <p className="font-medium">Storage</p>

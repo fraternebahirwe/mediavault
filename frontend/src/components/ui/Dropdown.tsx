@@ -71,7 +71,7 @@ export function DropdownItem({
     <button
       onClick={onClick}
       className={clsx(
-        "flex items-center gap-2 w-full px-3 py-2 text-sm rounded-lg text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors",
+        "flex items-center gap-2 w-full px-3 py-2 text-sm rounded-lg text-left hover:bg-gray-100 dark:hover:bg-gray-800 hover-nudge",
         danger && "text-red-600 dark:text-red-400"
       )}
     >

@@ -28,13 +28,13 @@ export function RecentFiles({ files }: { files: FileItem[] }) {
           <button
             key={file.id}
             onClick={() => navigate(`/files/all?search=${encodeURIComponent(file.fileName)}`)}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/60 text-left"
+            className="group hover-nudge w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/60 text-left"
           >
             <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden shrink-0">
               {file.thumbnailUrl ? (
-                <img src={file.thumbnailUrl} alt="" className="w-full h-full object-cover" />
+                <img src={file.thumbnailUrl} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-200" />
               ) : (
-                <Icon size={18} className="text-gray-400" />
+                <Icon size={18} className="text-gray-400 group-hover:scale-110 transition-transform duration-200" />
               )}
             </div>
             <div className="min-w-0 flex-1">

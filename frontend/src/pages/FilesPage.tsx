@@ -114,7 +114,7 @@ export function FilesPage() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 mb-1">
-            <button onClick={() => navigate(`/files/${category}`)} className="hover:text-brand-600 flex items-center gap-1">
+            <button onClick={() => navigate(`/files/${category}`)} className="hover:text-brand-600 transition-colors flex items-center gap-1">
               <Home size={13} /> {meta.title}
             </button>
             {currentFolder && (
@@ -157,7 +157,7 @@ export function FilesPage() {
           <FilterPanel filters={filters} onApply={setFilters} />
           {search && (
             <button
-              className="text-xs text-gray-500 dark:text-gray-400 hover:text-brand-600"
+              className="text-xs text-gray-500 dark:text-gray-400 hover:text-brand-600 transition-colors"
               onClick={() => setSearchParams({})}
             >
               Clear search "{search}"
@@ -167,14 +167,14 @@ export function FilesPage() {
 
         <div className="flex items-center gap-1 card p-0.5">
           <button
-            className={`p-1.5 rounded-lg ${viewMode === "grid" ? "bg-brand-50 text-brand-600 dark:bg-brand-900/40" : "text-gray-400"}`}
+            className={`p-1.5 rounded-lg transition duration-200 hover:scale-110 ${viewMode === "grid" ? "bg-brand-50 text-brand-600 dark:bg-brand-900/40" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"}`}
             onClick={() => setViewMode("grid")}
             aria-label="Grid view"
           >
             <Grid2x2 size={16} />
           </button>
           <button
-            className={`p-1.5 rounded-lg ${viewMode === "list" ? "bg-brand-50 text-brand-600 dark:bg-brand-900/40" : "text-gray-400"}`}
+            className={`p-1.5 rounded-lg transition duration-200 hover:scale-110 ${viewMode === "list" ? "bg-brand-50 text-brand-600 dark:bg-brand-900/40" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"}`}
             onClick={() => setViewMode("list")}
             aria-label="List view"
           >
@@ -189,9 +189,9 @@ export function FilesPage() {
             <button
               key={folder.id}
               onClick={() => setFolderId(folder.id)}
-              className="card p-3 flex items-center gap-2 hover:shadow-soft text-left"
+              className="card hover-lift group p-3 flex items-center gap-2 text-left"
             >
-              <FolderIcon size={20} className="text-brand-500 shrink-0" />
+              <FolderIcon size={20} className="text-brand-500 shrink-0 group-hover:scale-110 transition-transform duration-200" />
               <span className="text-sm font-medium truncate">{folder.name}</span>
             </button>
           ))}

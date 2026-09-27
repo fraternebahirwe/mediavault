@@ -59,7 +59,7 @@ export function Topbar({ onUploadClick }: { onUploadClick: () => void }) {
 
         <Dropdown
           trigger={
-            <button className="w-9 h-9 rounded-full bg-gray-700 dark:bg-gray-700 text-white text-sm font-medium flex items-center justify-center">
+            <button className="w-9 h-9 rounded-full bg-gray-700 dark:bg-gray-700 text-white text-sm font-medium flex items-center justify-center transition duration-200 hover:scale-105 hover:ring-2 hover:ring-brand-500/40">
               {initials || "?"}
             </button>
           }

@@ -20,7 +20,7 @@ export function MoveModal({ file, onClose }: { file: FileItem | null; onClose: (
         <button
           onClick={() => handleMove(null)}
           disabled={moveMutation.isPending}
-          className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-left text-sm"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover-nudge text-left text-sm"
         >
           <Home size={16} className="text-gray-400" /> Root (no folder)
         </button>
@@ -36,7 +36,7 @@ export function MoveModal({ file, onClose }: { file: FileItem | null; onClose: (
             key={folder.id}
             onClick={() => handleMove(folder.id)}
             disabled={moveMutation.isPending}
-            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-left text-sm"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover-nudge text-left text-sm"
           >
             <FolderIcon size={16} className="text-brand-500" /> {folder.name}
           </button>

@@ -11,8 +11,8 @@ export function MobileNav() {
           to={to}
           className={({ isActive }) =>
             clsx(
-              "flex flex-col items-center gap-0.5 px-3 py-1 text-xs rounded-lg",
-              isActive ? "text-brand-600 dark:text-brand-400" : "text-gray-500 dark:text-gray-400"
+              "flex flex-col items-center gap-0.5 px-3 py-1 text-xs rounded-lg transition duration-200 ease-out hover:-translate-y-0.5 active:scale-95",
+              isActive ? "text-brand-600 dark:text-brand-400" : "text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
             )
           }
         >

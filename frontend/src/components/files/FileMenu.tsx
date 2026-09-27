@@ -41,7 +41,7 @@ export function FileMenu({
     <Dropdown
       trigger={
         <button
-          className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500"
+          className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition duration-200 hover:scale-110"
           aria-label="More options"
         >
           <MoreVertical size={16} />

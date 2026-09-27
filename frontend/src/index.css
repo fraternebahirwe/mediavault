@@ -37,19 +37,32 @@ body {
   }
 
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition duration-200 ease-out hover:-translate-y-px active:translate-y-0 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
   }
   .btn-primary {
-    @apply btn bg-brand-600 text-white hover:bg-brand-700;
+    @apply btn bg-brand-600 text-white hover:bg-brand-700 hover:shadow-md hover:shadow-brand-600/25;
   }
   .btn-secondary {
     @apply btn bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700;
   }
   .btn-danger {
-    @apply btn bg-red-600 text-white hover:bg-red-700;
+    @apply btn bg-red-600 text-white hover:bg-red-700 hover:shadow-md hover:shadow-red-600/25;
   }
   .btn-ghost {
     @apply btn hover:bg-gray-100 dark:hover:bg-gray-800;
+  }
+
+  /*
+   * Shared hover motion, modelled on the file cards: interactive cards lift
+   * slightly with a softer shadow, rows and menu items nudge sideways.
+   * hover:z-10 keeps a lifted card (and any menu open inside it) above its
+   * neighbours.
+   */
+  .hover-lift {
+    @apply relative transition duration-200 ease-out hover:z-10 hover:-translate-y-0.5 hover:shadow-soft;
+  }
+  .hover-nudge {
+    @apply transition duration-200 ease-out hover:translate-x-0.5;
   }
 
   /*
@@ -60,5 +73,14 @@ body {
    */
   .input {
     @apply w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-base sm:text-sm outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
   }
 }

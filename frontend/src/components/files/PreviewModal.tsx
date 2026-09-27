@@ -54,14 +54,14 @@ export function PreviewModal({ file, onClose }: { file: FileItem | null; onClose
           {file.fileType === "PHOTO" && (
             <>
               <button
-                className="p-2 rounded-full hover:bg-white/10"
+                className="p-2 rounded-full hover:bg-white/10 transition duration-200 hover:scale-110"
                 onClick={() => setZoom((z) => Math.max(1, z - 0.5))}
                 aria-label="Zoom out"
               >
                 <Minus size={18} />
               </button>
               <button
-                className="p-2 rounded-full hover:bg-white/10"
+                className="p-2 rounded-full hover:bg-white/10 transition duration-200 hover:scale-110"
                 onClick={() => setZoom((z) => Math.min(4, z + 0.5))}
                 aria-label="Zoom in"
               >
@@ -70,23 +70,23 @@ export function PreviewModal({ file, onClose }: { file: FileItem | null; onClose
             </>
           )}
           <button
-            className="p-2 rounded-full hover:bg-white/10"
+            className="p-2 rounded-full hover:bg-white/10 transition duration-200 hover:scale-110"
             onClick={enterFullscreen}
             aria-label="Fullscreen"
           >
             <Maximize size={18} />
           </button>
           <button
-            className="p-2 rounded-full hover:bg-white/10"
+            className="p-2 rounded-full hover:bg-white/10 transition duration-200 hover:scale-110"
             onClick={() => toggleFavorite.mutate(file.id)}
             aria-label="Toggle favorite"
           >
             <Star size={18} className={file.isFavorite ? "fill-yellow-400 text-yellow-400" : ""} />
           </button>
-          <button className="p-2 rounded-full hover:bg-white/10" onClick={download} aria-label="Download">
+          <button className="p-2 rounded-full hover:bg-white/10 transition duration-200 hover:scale-110" onClick={download} aria-label="Download">
             <Download size={18} />
           </button>
-          <button className="p-2 rounded-full hover:bg-white/10" onClick={onClose} aria-label="Close">
+          <button className="p-2 rounded-full hover:bg-white/10 transition duration-200 hover:scale-110" onClick={onClose} aria-label="Close">
             <X size={18} />
           </button>
         </div>

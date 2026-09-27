@@ -22,7 +22,7 @@ export function FileCard(props: FileCardProps) {
   const Icon = getFileIcon(file.fileType, file.mimeType);
 
   return (
-    <div className="card group flex flex-col hover:shadow-soft transition-shadow">
+    <div className="card hover-lift group flex flex-col">
       <button
         onClick={onOpen}
         className="relative aspect-square rounded-t-xl2 bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden"
@@ -35,7 +35,7 @@ export function FileCard(props: FileCardProps) {
             loading="lazy"
           />
         ) : (
-          <Icon size={40} className="text-gray-400" />
+          <Icon size={40} className="text-gray-400 group-hover:scale-110 transition-transform duration-200" />
         )}
         {file.isFavorite && (
           <Star size={16} className="absolute top-2 left-2 fill-yellow-400 text-yellow-400 drop-shadow" />

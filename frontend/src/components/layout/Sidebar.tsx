@@ -30,10 +30,10 @@ export function Sidebar() {
             to={to}
             className={({ isActive }) =>
               clsx(
-                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition duration-200 ease-out",
                 isActive
                   ? "bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300"
-                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:translate-x-1"
               )
             }
           >
@@ -43,7 +43,7 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="card p-3 mt-4">
+      <div className="card hover-lift p-3 mt-4">
         <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Storage</p>
         <ProgressBar percent={percent} colorClass={percent > 90 ? "bg-red-500" : "bg-brand-600"} />
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">

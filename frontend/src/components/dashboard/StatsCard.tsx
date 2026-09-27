@@ -10,8 +10,8 @@ interface StatsCardProps {
 
 export function StatsCard({ icon: Icon, label, value, colorClass }: StatsCardProps) {
   return (
-    <div className="card p-4 flex items-center gap-3">
-      <div className={clsx("w-10 h-10 rounded-lg flex items-center justify-center shrink-0", colorClass)}>
+    <div className="card hover-lift group p-4 flex items-center gap-3">
+      <div className={clsx("w-10 h-10 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-200", colorClass)}>
         <Icon size={20} className="text-white" />
       </div>
       <div className="min-w-0">

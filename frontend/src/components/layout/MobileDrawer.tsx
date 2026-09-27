@@ -31,10 +31,10 @@ export function MobileDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: ()
               onClick={onClose}
               className={({ isActive }) =>
                 clsx(
-                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium",
+                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition duration-200 ease-out",
                   isActive
                     ? "bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300"
-                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:translate-x-1"
                 )
               }
             >
